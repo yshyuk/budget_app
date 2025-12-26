@@ -148,6 +148,16 @@ export default function Dashboard() {
                 >
                   예산 관리
                 </Link>
+                <Link
+                  to="/wishlist"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive('/wishlist')
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  위시리스트
+                </Link>
               </div>
             </div>
             <div className="flex items-center space-x-4">
