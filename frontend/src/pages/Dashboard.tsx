@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Dashboard() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -12,13 +13,37 @@ export default function Dashboard() {
     }
   };
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-8">
               <h1 className="text-xl font-bold text-gray-900">가계부</h1>
+              <div className="flex space-x-4">
+                <Link
+                  to="/dashboard"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive('/dashboard')
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  대시보드
+                </Link>
+                <Link
+                  to="/transactions"
+                  className={`px-3 py-2 rounded-md text-sm font-medium ${
+                    isActive('/transactions')
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  거래 내역
+                </Link>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
               <span className="text-sm text-gray-700">{user?.email}</span>
