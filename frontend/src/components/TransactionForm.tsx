@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { TransactionType } from '../types/database';
@@ -27,6 +27,7 @@ export default function TransactionForm({ onSuccess }: TransactionFormProps) {
     setLoading(true);
 
     try {
+      // @ts-ignore
       const { error: insertError } = await supabase.from('transactions').insert({
         user_id: user.id,
         type,

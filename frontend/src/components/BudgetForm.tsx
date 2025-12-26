@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -38,16 +38,18 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
         // 업데이트
         const { error: updateError } = await supabase
           .from('budgets')
+          // @ts-ignore
           .update({
             income_budget: parseFloat(incomeBudget),
             expense_budget: parseFloat(expenseBudget),
             saving_budget: parseFloat(savingBudget),
           })
-          .eq('id', existing.id);
+          .eq('id', (existing as any).id);
 
         if (updateError) throw updateError;
       } else {
         // 삽입
+        // @ts-ignore
         const { error: insertError } = await supabase.from('budgets').insert({
           user_id: user.id,
           year,

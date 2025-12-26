@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import Dashboard from './pages/Dashboard';
@@ -20,7 +21,9 @@ function App() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Layout>
+                  <Dashboard />
+                </Layout>
               </ProtectedRoute>
             }
           />
@@ -28,7 +31,9 @@ function App() {
             path="/transactions"
             element={
               <ProtectedRoute>
-                <Transactions />
+                <Layout>
+                  <Transactions />
+                </Layout>
               </ProtectedRoute>
             }
           />
@@ -36,7 +41,9 @@ function App() {
             path="/budgets"
             element={
               <ProtectedRoute>
-                <Budgets />
+                <Layout>
+                  <Budgets />
+                </Layout>
               </ProtectedRoute>
             }
           />
@@ -44,7 +51,9 @@ function App() {
             path="/wishlist"
             element={
               <ProtectedRoute>
-                <Wishlist />
+                <Layout>
+                  <Wishlist />
+                </Layout>
               </ProtectedRoute>
             }
           />

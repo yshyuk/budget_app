@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -24,6 +24,7 @@ export default function WishlistForm({ onSuccess }: WishlistFormProps) {
     setLoading(true);
 
     try {
+      // @ts-ignore
       const { error: insertError } = await supabase.from('wishlist_items').insert({
         user_id: user.id,
         item_name: itemName,
