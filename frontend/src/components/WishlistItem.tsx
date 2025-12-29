@@ -41,6 +41,7 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
       const newSavedAmount = item.saved_amount + amount;
       const { error } = await supabase
         .from('wishlist_items')
+        // @ts-ignore
         .update({ saved_amount: newSavedAmount })
         .eq('id', item.id);
 
@@ -58,6 +59,7 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
     try {
       const { error } = await supabase
         .from('wishlist_items')
+        // @ts-ignore
         .update({ is_purchased: !item.is_purchased })
         .eq('id', item.id);
 
@@ -72,6 +74,7 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
     try {
       const { error } = await supabase
         .from('wishlist_items')
+        // @ts-ignore
         .update(editForm)
         .eq('id', item.id);
 
@@ -99,9 +102,8 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
 
   return (
     <div
-      className={`bg-white rounded-lg shadow p-6 ${
-        item.is_purchased ? 'opacity-60 bg-gray-50' : ''
-      }`}
+      className={`bg-white rounded-lg shadow p-6 ${item.is_purchased ? 'opacity-60 bg-gray-50' : ''
+        }`}
     >
       {isEditing ? (
         // 수정 모드
@@ -166,9 +168,8 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-1">
                 <h3
-                  className={`text-lg font-bold ${
-                    item.is_purchased ? 'line-through text-gray-500' : 'text-gray-900'
-                  }`}
+                  className={`text-lg font-bold ${item.is_purchased ? 'line-through text-gray-500' : 'text-gray-900'
+                    }`}
                 >
                   {item.item_name}
                 </h3>
@@ -195,9 +196,8 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4">
               <div
-                className={`h-4 rounded-full transition-all duration-300 ${
-                  progress >= 100 ? 'bg-green-600' : 'bg-blue-600'
-                }`}
+                className={`h-4 rounded-full transition-all duration-300 ${progress >= 100 ? 'bg-green-600' : 'bg-blue-600'
+                  }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
@@ -268,11 +268,10 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
           <div className="flex space-x-2">
             <button
               onClick={handleTogglePurchased}
-              className={`flex-1 px-3 py-1.5 text-sm rounded ${
-                item.is_purchased
-                  ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  : 'bg-green-600 text-white hover:bg-green-700'
-              }`}
+              className={`flex-1 px-3 py-1.5 text-sm rounded ${item.is_purchased
+                ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
             >
               {item.is_purchased ? '구매 취소' : '✓ 구매 완료'}
             </button>

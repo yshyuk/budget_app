@@ -1,27 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import type { Transaction } from '../types/database';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { ArrowUpIcon, ArrowDownIcon, WalletIcon, PlusIcon } from 'lucide-react';
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { user } = useAuth();
   const [monthlyTransactions, setMonthlyTransactions] = useState<Transaction[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (!error) {
-      navigate('/login');
-    }
-  };
-
-  const isActive = (path: string) => location.pathname === path;
 
   useEffect(() => {
     if (!user) return;
@@ -84,240 +76,132 @@ export default function Dashboard() {
 
   const balance = summary.income - summary.expense - summary.saving;
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'income':
-        return 'text-green-600 bg-green-50';
-      case 'expense':
-        return 'text-red-600 bg-red-50';
-      case 'saving':
-        return 'text-blue-600 bg-blue-50';
-      default:
-        return 'text-gray-600 bg-gray-50';
-    }
-  };
-
-  const getTypeText = (type: string) => {
-    switch (type) {
-      case 'income':
-        return '수입';
-      case 'expense':
-        return '지출';
-      case 'saving':
-        return '저축';
-      default:
-        return type;
-    }
-  };
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
+        <p className="text-muted-foreground">로딩 중...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">가계부</h1>
-              <div className="flex space-x-4">
-                <Link
-                  to="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/dashboard')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  대시보드
-                </Link>
-                <Link
-                  to="/transactions"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/transactions')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  거래 내역
-                </Link>
-                <Link
-                  to="/budgets"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/budgets')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  예산 관리
-                </Link>
-                <Link
-                  to="/wishlist"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/wishlist')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  위시리스트
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">{user?.email}</span>
-              <button
-                onClick={handleSignOut}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                로그아웃
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* 페이지 제목 */}
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-900">대시보드</h2>
-          <p className="text-gray-600 mt-1">
-            {format(new Date(), 'yyyy년 MM월', { locale: ko })} 재무 현황
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold tracking-tight">대시보드</h2>
+          <p className="text-muted-foreground mt-1">
+            {format(new Date(), 'yyyy년 MM월', { locale: ko })} 재무 현황입니다.
           </p>
         </div>
+        <div className="flex items-center space-x-2">
+          <Button asChild>
+            <Link to="/transactions">
+              <PlusIcon className="mr-2 h-4 w-4" />
+              거래 추가
+            </Link>
+          </Button>
+        </div>
+      </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">로딩 중...</p>
-          </div>
-        ) : (
-          <>
-            {/* 월별 합계 카드 */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-sm text-gray-600 mb-1">이번 달 수입</p>
-                <p className="text-3xl font-bold text-green-600">
-                  +{summary.income.toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">원</p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-sm text-gray-600 mb-1">이번 달 지출</p>
-                <p className="text-3xl font-bold text-red-600">
-                  -{summary.expense.toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">원</p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-sm text-gray-600 mb-1">이번 달 저축</p>
-                <p className="text-3xl font-bold text-blue-600">
-                  -{summary.saving.toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">원</p>
-              </div>
-              <div className="bg-white rounded-lg shadow p-6">
-                <p className="text-sm text-gray-600 mb-1">잔액</p>
-                <p
-                  className={`text-3xl font-bold ${
-                    balance >= 0 ? 'text-green-600' : 'text-red-600'
-                  }`}
-                >
-                  {balance >= 0 ? '+' : ''}
-                  {balance.toLocaleString()}
-                </p>
-                <p className="text-xs text-gray-500 mt-1">원</p>
-              </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">이번 달 수입</CardTitle>
+            <ArrowUpIcon className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">+{summary.income.toLocaleString()}원</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">이번 달 지출</CardTitle>
+            <ArrowDownIcon className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">-{summary.expense.toLocaleString()}원</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">이번 달 저축</CardTitle>
+            <WalletIcon className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">-{summary.saving.toLocaleString()}원</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">잔액</CardTitle>
+            <WalletIcon className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {balance >= 0 ? '+' : ''}{balance.toLocaleString()}원
             </div>
+          </CardContent>
+        </Card>
+      </div>
 
-            {/* 최근 거래 내역 */}
-            <div className="bg-white rounded-lg shadow">
-              <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 className="text-lg font-bold text-gray-900">최근 거래</h3>
-                <Link
-                  to="/transactions"
-                  className="text-sm text-blue-600 hover:text-blue-700"
-                >
-                  전체 보기 →
-                </Link>
-              </div>
-              <div className="divide-y divide-gray-200">
-                {recentTransactions.length === 0 ? (
-                  <div className="px-6 py-8 text-center text-gray-500">
-                    거래 내역이 없습니다.
-                  </div>
-                ) : (
-                  recentTransactions.map((transaction) => (
-                    <div
-                      key={transaction.id}
-                      className="px-6 py-4 hover:bg-gray-50"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs font-medium ${getTypeColor(
-                                transaction.type
-                              )}`}
-                            >
-                              {getTypeText(transaction.type)}
-                            </span>
-                            <span className="text-sm font-medium text-gray-900">
-                              {transaction.category}
-                            </span>
-                          </div>
-                          {transaction.description && (
-                            <p className="text-sm text-gray-600">
-                              {transaction.description}
-                            </p>
-                          )}
-                          <p className="text-xs text-gray-500 mt-1">
-                            {format(
-                              new Date(transaction.transaction_date),
-                              'PPP',
-                              { locale: ko }
-                            )}
-                          </p>
-                        </div>
-                        <div className="text-right ml-4">
-                          <p
-                            className={`text-lg font-bold ${
-                              transaction.type === 'income'
-                                ? 'text-green-600'
-                                : 'text-red-600'
-                            }`}
-                          >
-                            {transaction.type === 'income' ? '+' : '-'}
-                            {transaction.amount.toLocaleString()}원
-                          </p>
-                        </div>
-                      </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+        <Card className="col-span-4">
+          <CardHeader>
+            <CardTitle>최근 거래</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-8">
+              {recentTransactions.length === 0 ? (
+                <p className="text-center text-muted-foreground py-8">거래 내역이 없습니다.</p>
+              ) : (
+                recentTransactions.map((transaction) => (
+                  <div key={transaction.id} className="flex items-center">
+                    <div className={`flex items-center justify-center w-9 h-9 rounded-full border ${transaction.type === 'income' ? 'bg-green-100 border-green-200' :
+                      transaction.type === 'expense' ? 'bg-red-100 border-red-200' :
+                        'bg-blue-100 border-blue-200'
+                      }`}>
+                      {transaction.type === 'income' ? <ArrowUpIcon className="h-4 w-4 text-green-600" /> :
+                        transaction.type === 'expense' ? <ArrowDownIcon className="h-4 w-4 text-red-600" /> :
+                          <WalletIcon className="h-4 w-4 text-blue-600" />}
                     </div>
-                  ))
-                )}
-              </div>
+                    <div className="ml-4 space-y-1">
+                      <p className="text-sm font-medium leading-none">{transaction.category}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {transaction.description || format(new Date(transaction.transaction_date), 'PPP', { locale: ko })}
+                      </p>
+                    </div>
+                    <div className={`ml-auto font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                      {transaction.type === 'income' ? '+' : '-'}{transaction.amount.toLocaleString()}원
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
-
-            {/* 빠른 동작 */}
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Link
-                to="/transactions"
-                className="block bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow"
-              >
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">
-                  거래 추가
-                </h4>
-                <p className="text-sm text-gray-600">
-                  새로운 수입, 지출, 저축 내역을 기록하세요
-                </p>
+          </CardContent>
+        </Card>
+        <Card className="col-span-3">
+          <CardHeader>
+            <CardTitle>빠른 동작</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button asChild className="w-full justify-start" variant="outline">
+              <Link to="/transactions">
+                <PlusIcon className="mr-2 h-4 w-4" />
+                거래 추가하기
               </Link>
-              <div className="bg-gray-100 rounded-lg p-6">
-                <h4 className="text-lg font-semibold text-gray-500 mb-2">
-                  예산 관리 (준비 중)
-                </h4>
-                <p className="text-sm text-gray-500">
-                  월별 예산을 설정하고 관리하세요
-                </p>
+            </Button>
+            <div className="rounded-lg border bg-muted/50 p-4">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <p className="text-sm font-medium">예산 관리</p>
+                  <p className="text-xs text-muted-foreground">준비 중인 기능입니다.</p>
+                </div>
               </div>
             </div>
-          </>
-        )}
-      </main>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

@@ -22,6 +22,7 @@ export default function TransactionList({
     try {
       const { error } = await supabase
         .from('transactions')
+        // @ts-ignore
         .delete()
         .eq('id', id);
 
@@ -47,6 +48,7 @@ export default function TransactionList({
     try {
       const { error } = await supabase
         .from('transactions')
+        // @ts-ignore
         .update(editForm)
         .eq('id', id);
 

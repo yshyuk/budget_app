@@ -1,30 +1,19 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import TransactionForm from '../components/TransactionForm';
 import TransactionList from '../components/TransactionList';
 import type { Transaction } from '../types/database';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 
 export default function Transactions() {
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(
     new Date().toISOString().slice(0, 7)
   );
-
-  const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (!error) {
-      navigate('/login');
-    }
-  };
-
-  const isActive = (path: string) => location.pathname === path;
 
   const fetchTransactions = async () => {
     if (!user) return;
@@ -77,143 +66,93 @@ export default function Transactions() {
   const balance = summary.income - summary.expense - summary.saving;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* 네비게이션 */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-bold text-gray-900">가계부</h1>
-              <div className="flex space-x-4">
-                <Link
-                  to="/dashboard"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/dashboard')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  대시보드
-                </Link>
-                <Link
-                  to="/transactions"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/transactions')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  거래 내역
-                </Link>
-                <Link
-                  to="/budgets"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/budgets')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  예산 관리
-                </Link>
-                <Link
-                  to="/wishlist"
-                  className={`px-3 py-2 rounded-md text-sm font-medium ${
-                    isActive('/wishlist')
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-100'
-                  }`}
-                >
-                  위시리스트
-                </Link>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">{user?.email}</span>
-              <button
-                onClick={handleSignOut}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                로그아웃
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-3xl font-bold tracking-tight">거래 내역</h2>
+      </div>
 
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">거래 내역</h1>
-        </div>
+      {/* 월 선택 */}
+      <div className="flex items-center space-x-2">
+        <label htmlFor="month" className="text-sm font-medium">
+          조회 월
+        </label>
+        <input
+          type="month"
+          id="month"
+          value={selectedMonth}
+          onChange={(e) => setSelectedMonth(e.target.value)}
+          className="rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        />
+      </div>
 
-        {/* 월 선택 */}
-        <div className="mb-6">
-          <label
-            htmlFor="month"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            조회 월
-          </label>
-          <input
-            type="month"
-            id="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* 월별 합계 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">수입</p>
-            <p className="text-2xl font-bold text-green-600">
+      {/* 월별 합계 */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">수입</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
               +{summary.income.toLocaleString()}원
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">지출</p>
-            <p className="text-2xl font-bold text-red-600">
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">지출</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
               -{summary.expense.toLocaleString()}원
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">저축</p>
-            <p className="text-2xl font-bold text-blue-600">
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">저축</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
               -{summary.saving.toLocaleString()}원
-            </p>
-          </div>
-          <div className="bg-white rounded-lg shadow p-4">
-            <p className="text-sm text-gray-600">잔액</p>
-            <p
-              className={`text-2xl font-bold ${
-                balance >= 0 ? 'text-green-600' : 'text-red-600'
-              }`}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">잔액</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div
+              className={`text-2xl font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'
+                }`}
             >
               {balance >= 0 ? '+' : ''}
               {balance.toLocaleString()}원
-            </p>
-          </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* 거래 추가 폼 */}
+        <div className="lg:col-span-1">
+          <TransactionForm onSuccess={fetchTransactions} />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 거래 추가 폼 */}
-          <div className="lg:col-span-1">
-            <TransactionForm onSuccess={fetchTransactions} />
-          </div>
-
-          {/* 거래 목록 */}
-          <div className="lg:col-span-2">
-            {loading ? (
-              <div className="bg-white rounded-lg shadow p-6 text-center">
-                <p className="text-gray-500">로딩 중...</p>
-              </div>
-            ) : (
-              <TransactionList
-                transactions={transactions}
-                onUpdate={fetchTransactions}
-              />
-            )}
-          </div>
+        {/* 거래 목록 */}
+        <div className="lg:col-span-2">
+          {loading ? (
+            <Card>
+              <CardContent className="flex items-center justify-center py-12">
+                <p className="text-muted-foreground">로딩 중...</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <TransactionList
+              transactions={transactions}
+              onUpdate={fetchTransactions}
+            />
+          )}
         </div>
       </div>
     </div>
