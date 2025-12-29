@@ -38,14 +38,19 @@
 budget_app/
 ├── database/
 │   └── schema.sql          # Supabase 데이터베이스 스키마
-├── frontend/
+├── frontend/               # 웹 애플리케이션
 │   ├── src/
 │   │   ├── components/     # React 컴포넌트
 │   │   ├── pages/          # 페이지 컴포넌트
 │   │   ├── lib/            # 유틸리티 및 설정
-│   │   └── types/          # TypeScript 타입 정의
+│   │   ├── types/          # TypeScript 타입 정의
+│   │   └── tests/          # 테스트 파일
 │   ├── .env.example        # 환경 변수 템플릿
 │   └── package.json
+├── mobile/                 # Android 모바일 앱 (Capacitor)
+│   ├── capacitor.config.ts # Capacitor 설정
+│   ├── package.json
+│   └── README.md           # 모바일 앱 설정 가이드
 └── README.md
 ```
 
@@ -167,6 +172,42 @@ npm run build
   - priority (1-5), target_date, is_purchased
 
 자세한 스키마는 `database/schema.sql` 파일을 참조하세요.
+
+## 모바일 앱 (Android)
+
+웹 애플리케이션과 동일한 기능을 제공하는 Android 앱입니다.
+
+### 특징
+- 📱 Android 폰 및 태블릿 지원
+- 🔄 웹과 동일한 백엔드 (Supabase) 사용
+- ⚡ Capacitor 기반으로 빠른 성능
+- 🎨 모바일 최적화된 UI
+
+### 설치 및 개발
+
+자세한 내용은 [`mobile/README.md`](mobile/README.md)를 참조하세요.
+
+**빠른 시작:**
+
+```bash
+# 1. 의존성 설치
+cd mobile
+npm install
+
+# 2. Android 프로젝트 생성 (처음 한 번만)
+npx cap add android
+
+# 3. 웹 빌드 및 동기화
+npm run build
+
+# 4. Android Studio에서 열기
+npm run android
+```
+
+**요구사항:**
+- Android Studio (최신 버전)
+- Android SDK (API 33+)
+- Node.js 18+
 
 ## 라이선스
 
