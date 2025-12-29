@@ -4,11 +4,11 @@
 
 ## 기능
 
-- 수입/지출 추적
-- 카테고리별 분류
-- 예산 설정 및 관리
-- 통계 및 차트 시각화
-- 사용자 인증 (Supabase Auth)
+- 🔐 사용자 인증 (회원가입, 로그인, 로그아웃)
+- 💰 거래 내역 관리 (수입, 지출, 저축)
+- 📊 대시보드 개요 (월별 요약, 최근 거래)
+- 💼 예산 관리 (월별 예산 설정, 진행률 추적)
+- 🎯 위시리스트 (저축 목표 설정 및 관리)
 
 ## 기술 스택
 
@@ -17,9 +17,14 @@
 - **React 18** - UI 라이브러리
 - **TypeScript** - 타입 안정성
 - **React Router** - 라우팅
-- **Tailwind CSS** - 스타일링
+- **Tailwind CSS v4** - 스타일링
 - **Recharts** - 차트 라이브러리
 - **date-fns** - 날짜 처리
+
+### Testing
+- **Vitest** - 테스트 프레임워크
+- **React Testing Library** - 컴포넌트 테스트
+- **MSW (Mock Service Worker)** - API 모킹
 
 ### Backend
 - **Supabase** - BaaS (Backend as a Service)
@@ -87,6 +92,54 @@ npm run dev
 
 브라우저에서 `http://localhost:5173`을 열어 앱을 확인할 수 있습니다.
 
+## 테스트
+
+### 테스트 실행
+
+```bash
+# 모든 테스트 실행
+npm run test
+
+# 테스트 UI 모드로 실행
+npm run test:ui
+
+# 커버리지 리포트와 함께 실행
+npm run test:coverage
+```
+
+### 테스트 구조
+
+테스트는 각 컴포넌트와 같은 디렉토리의 `__tests__` 폴더에 위치합니다:
+
+```
+src/
+├── components/
+│   ├── __tests__/
+│   │   ├── TransactionForm.test.tsx
+│   │   ├── TransactionList.test.tsx
+│   │   ├── BudgetForm.test.tsx
+│   │   ├── BudgetProgress.test.tsx
+│   │   ├── WishlistForm.test.tsx
+│   │   └── WishlistItem.test.tsx
+│   └── ...
+├── contexts/
+│   └── __tests__/
+│       └── AuthContext.test.tsx
+└── pages/
+    └── __tests__/
+        ├── Login.test.tsx
+        └── SignUp.test.tsx
+```
+
+### 테스트 커버리지
+
+주요 테스트 영역:
+- ✅ 인증 플로우 (로그인, 회원가입, AuthContext)
+- ✅ 거래 관리 (CRUD 작업)
+- ✅ 예산 관리 (설정, 진행률 계산)
+- ✅ 위시리스트 (저축 목표 관리)
+- ✅ 폼 검증 및 에러 처리
+
 ## 빌드
 
 프로덕션 빌드를 생성하려면:
@@ -101,10 +154,17 @@ npm run build
 
 주요 테이블:
 
-- **users** - 사용자 정보
-- **categories** - 수입/지출 카테고리
-- **transactions** - 거래 내역
-- **budgets** - 예산 설정
+- **transactions** - 거래 내역 (수입, 지출, 저축)
+  - type: 'income' | 'expense' | 'saving'
+  - category, amount, transaction_date, description
+
+- **budgets** - 월별 예산 설정
+  - year, month
+  - income_budget, expense_budget, saving_budget
+
+- **wishlist_items** - 위시리스트 아이템
+  - item_name, target_amount, current_amount
+  - priority (1-5), target_date, is_purchased
 
 자세한 스키마는 `database/schema.sql` 파일을 참조하세요.
 
