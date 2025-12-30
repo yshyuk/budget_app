@@ -40,7 +40,7 @@ export default function MonthlyTrendChart() {
             .lte('transaction_date', format(endDate, 'yyyy-MM-dd'));
 
           const summary = transactions?.reduce(
-            (acc, t) => {
+            (acc, t: { type: 'income' | 'expense' | 'saving'; amount: number }) => {
               acc[t.type] += t.amount;
               return acc;
             },
@@ -93,7 +93,7 @@ export default function MonthlyTrendChart() {
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip
-              formatter={(value: number) => `${value.toLocaleString()}원`}
+              formatter={(value?: number) => `${(value || 0).toLocaleString()}원`}
             />
             <Legend />
             <Line

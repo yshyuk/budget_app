@@ -40,7 +40,7 @@ export default function IncomeExpenseChart() {
             .lte('transaction_date', format(endDate, 'yyyy-MM-dd'));
 
           const summary = transactions?.reduce(
-            (acc, t) => {
+            (acc, t: { type: string; amount: number }) => {
               if (t.type === 'income') acc.income += t.amount;
               else if (t.type === 'expense') acc.expense += t.amount;
               else if (t.type === 'saving') acc.saving += t.amount;
@@ -95,7 +95,7 @@ export default function IncomeExpenseChart() {
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip
-              formatter={(value: number) => `${value.toLocaleString()}원`}
+              formatter={(value?: number) => `${(value || 0).toLocaleString()}원`}
             />
             <Legend />
             <Bar dataKey="수입" fill="#10b981" />

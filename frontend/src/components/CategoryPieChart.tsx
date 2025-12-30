@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface CategoryData {
   name: string;
   value: number;
+  [key: string]: string | number;
 }
 
 const COLORS = [
@@ -47,7 +48,7 @@ export default function CategoryPieChart() {
 
         // 카테고리별로 그룹화
         const categoryMap = new Map<string, number>();
-        transactions?.forEach((t) => {
+        transactions?.forEach((t: { category: string; amount: number }) => {
           const current = categoryMap.get(t.category) || 0;
           categoryMap.set(t.category, current + t.amount);
         });
@@ -121,8 +122,8 @@ export default function CategoryPieChart() {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) =>
-                `${name} ${(percent * 100).toFixed(0)}%`
+              label={({ name, percent }: { name: string; percent?: number }) =>
+                `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
               }
               outerRadius={100}
               innerRadius={60}
@@ -133,7 +134,7 @@ export default function CategoryPieChart() {
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value: number) => `${value.toLocaleString()}원`} />
+            <Tooltip formatter={(value?: number) => `${(value || 0).toLocaleString()}원`} />
             <Legend />
           </PieChart>
         </ResponsiveContainer>
