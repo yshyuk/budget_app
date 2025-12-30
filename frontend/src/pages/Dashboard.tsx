@@ -7,7 +7,8 @@ import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
-import { ArrowUpIcon, ArrowDownIcon, WalletIcon, PlusIcon } from 'lucide-react';
+import { Skeleton, SkeletonCard } from '../components/ui/Skeleton';
+import { ArrowUpIcon, ArrowDownIcon, WalletIcon, PlusIcon, Inbox, Heart } from 'lucide-react';
 import MonthlyTrendChart from '../components/MonthlyTrendChart';
 import CategoryPieChart from '../components/CategoryPieChart';
 import IncomeExpenseChart from '../components/IncomeExpenseChart';
@@ -81,8 +82,29 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
-        <p className="text-muted-foreground">로딩 중...</p>
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-9 w-48 mb-2" />
+          <Skeleton className="h-5 w-64" />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <Card className="col-span-4">
+            <CardContent className="pt-6">
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
+          <Card className="col-span-3">
+            <CardContent className="pt-6">
+              <Skeleton className="h-64 w-full" />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
@@ -155,7 +177,19 @@ export default function Dashboard() {
           <CardContent>
             <div className="space-y-8">
               {recentTransactions.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">거래 내역이 없습니다.</p>
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground font-medium mb-1">거래 내역이 없습니다</p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    첫 거래를 추가하여 재무 관리를 시작하세요
+                  </p>
+                  <Button asChild size="sm">
+                    <Link to="/transactions">
+                      <PlusIcon className="mr-2 h-4 w-4" />
+                      거래 추가하기
+                    </Link>
+                  </Button>
+                </div>
               ) : (
                 recentTransactions.map((transaction) => (
                   <div key={transaction.id} className="flex items-center">
@@ -187,21 +221,25 @@ export default function Dashboard() {
           <CardHeader>
             <CardTitle>빠른 동작</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             <Button asChild className="w-full justify-start" variant="outline">
               <Link to="/transactions">
                 <PlusIcon className="mr-2 h-4 w-4" />
                 거래 추가하기
               </Link>
             </Button>
-            <div className="rounded-lg border bg-muted/50 p-4">
-              <div className="flex items-center gap-4">
-                <div className="flex-1">
-                  <p className="text-sm font-medium">예산 관리</p>
-                  <p className="text-xs text-muted-foreground">준비 중인 기능입니다.</p>
-                </div>
-              </div>
-            </div>
+            <Button asChild className="w-full justify-start" variant="outline">
+              <Link to="/budgets">
+                <WalletIcon className="mr-2 h-4 w-4" />
+                예산 설정하기
+              </Link>
+            </Button>
+            <Button asChild className="w-full justify-start" variant="outline">
+              <Link to="/wishlist">
+                <Heart className="mr-2 h-4 w-4" />
+                위시리스트 추가
+              </Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

@@ -6,6 +6,7 @@ import TransactionList from '../components/TransactionList';
 import type { Transaction } from '../types/database';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Calendar } from 'lucide-react';
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -72,18 +73,25 @@ export default function Transactions() {
       </div>
 
       {/* 월 선택 */}
-      <div className="flex items-center space-x-2">
-        <label htmlFor="month" className="text-sm font-medium">
-          조회 월
-        </label>
-        <input
-          type="month"
-          id="month"
-          value={selectedMonth}
-          onChange={(e) => setSelectedMonth(e.target.value)}
-          className="rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        />
-      </div>
+      <Card>
+        <CardContent className="py-4">
+          <div className="flex items-center gap-3">
+            <Calendar className="h-5 w-5 text-muted-foreground" />
+            <div className="flex items-center gap-2 flex-1">
+              <label htmlFor="month" className="text-sm font-medium whitespace-nowrap">
+                조회 월
+              </label>
+              <input
+                type="month"
+                id="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 월별 합계 */}
       <div className="grid gap-4 md:grid-cols-4">

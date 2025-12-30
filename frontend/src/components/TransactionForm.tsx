@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 import type { TransactionType } from '../types/database';
 
 interface TransactionFormProps {
@@ -9,6 +10,7 @@ interface TransactionFormProps {
 
 export default function TransactionForm({ onSuccess }: TransactionFormProps) {
   const { user } = useAuth();
+  const toast = useToast();
   const [type, setType] = useState<TransactionType>('expense');
   const [category, setCategory] = useState('');
   const [amount, setAmount] = useState('');
@@ -17,13 +19,11 @@ export default function TransactionForm({ onSuccess }: TransactionFormProps) {
   );
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    setError('');
     setLoading(true);
 
     try {
@@ -45,9 +45,11 @@ export default function TransactionForm({ onSuccess }: TransactionFormProps) {
       setDescription('');
       setTransactionDate(new Date().toISOString().split('T')[0]);
 
+      toast.success('거래가 성공적으로 추가되었습니다.');
+
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || '거래 추가 중 오류가 발생했습니다.');
+      toast.error(err.message || '거래 추가 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -56,12 +58,6 @@ export default function TransactionForm({ onSuccess }: TransactionFormProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">새 거래 추가</h2>
-
-      {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 거래 유형 */}

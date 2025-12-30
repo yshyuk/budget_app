@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
 
 interface BudgetFormProps {
   onSuccess?: () => void;
@@ -8,6 +9,7 @@ interface BudgetFormProps {
 
 export default function BudgetForm({ onSuccess }: BudgetFormProps) {
   const { user } = useAuth();
+  const toast = useToast();
   const currentDate = new Date();
   const [year, setYear] = useState(currentDate.getFullYear());
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
@@ -15,13 +17,11 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
   const [expenseBudget, setExpenseBudget] = useState('');
   const [savingBudget, setSavingBudget] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
 
-    setError('');
     setLoading(true);
 
     try {
@@ -47,6 +47,7 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
           .eq('id', (existing as any).id);
 
         if (updateError) throw updateError;
+        toast.success('예산이 성공적으로 수정되었습니다.');
       } else {
         // 삽입
         // @ts-ignore
@@ -60,6 +61,7 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
         });
 
         if (insertError) throw insertError;
+        toast.success('예산이 성공적으로 설정되었습니다.');
       }
 
       // Reset form
@@ -69,7 +71,7 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
 
       if (onSuccess) onSuccess();
     } catch (err: any) {
-      setError(err.message || '예산 설정 중 오류가 발생했습니다.');
+      toast.error(err.message || '예산 설정 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -78,12 +80,6 @@ export default function BudgetForm({ onSuccess }: BudgetFormProps) {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-bold text-gray-900 mb-4">월별 예산 설정</h2>
-
-      {error && (
-        <div className="mb-4 rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* 연월 선택 */}
