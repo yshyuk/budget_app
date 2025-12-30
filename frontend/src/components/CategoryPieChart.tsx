@@ -122,8 +122,8 @@ export default function CategoryPieChart() {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }: { name: string; percent?: number }) =>
-                `${name} ${percent ? (percent * 100).toFixed(0) : 0}%`
+              label={(props: any) =>
+                `${props.name || ''} ${props.percent ? (props.percent * 100).toFixed(0) : 0}%`
               }
               outerRadius={100}
               innerRadius={60}
