@@ -8,6 +8,9 @@ import { ko } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { ArrowUpIcon, ArrowDownIcon, WalletIcon, PlusIcon } from 'lucide-react';
+import MonthlyTrendChart from '../components/MonthlyTrendChart';
+import CategoryPieChart from '../components/CategoryPieChart';
+import IncomeExpenseChart from '../components/IncomeExpenseChart';
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -201,6 +204,25 @@ export default function Dashboard() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* 차트 섹션 (웹 전용 - 태블릿/데스크탑) */}
+      <div className="hidden lg:block space-y-8">
+        <div>
+          <h3 className="text-2xl font-bold tracking-tight mb-4">통계 및 분석</h3>
+          <p className="text-muted-foreground mb-6">
+            지출 패턴과 재무 추이를 한눈에 확인하세요.
+          </p>
+        </div>
+
+        {/* 월별 추이 차트 */}
+        <MonthlyTrendChart />
+
+        {/* 카테고리별 분포 & 수입/지출 비교 */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <CategoryPieChart />
+          <IncomeExpenseChart />
+        </div>
       </div>
     </div>
   );
