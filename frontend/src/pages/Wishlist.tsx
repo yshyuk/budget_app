@@ -6,6 +6,7 @@ import WishlistItem from '../components/WishlistItem';
 import type { WishlistItem as WishlistItemType } from '../types/database';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Inbox } from 'lucide-react';
 
 export default function Wishlist() {
   const { user } = useAuth();
@@ -161,10 +162,11 @@ export default function Wishlist() {
           <div className="lg:col-span-2">
             {filteredItems.length === 0 ? (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <p className="text-muted-foreground">위시리스트가 비어있습니다.</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    왼쪽 폼에서 새 아이템을 추가해보세요!
+                <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                  <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground font-medium mb-1">위시리스트가 비어있습니다</p>
+                  <p className="text-sm text-muted-foreground">
+                    사고 싶은 물건을 추가하고 저축 목표를 달성하세요
                   </p>
                 </CardContent>
               </Card>

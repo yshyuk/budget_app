@@ -28,6 +28,7 @@
     "@capacitor/status-bar": "^6.0.1"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.2.0"
+    "@capacitor/cli": "^6.2.0",
+    "typescript": "^5.9.3"
   }
 }

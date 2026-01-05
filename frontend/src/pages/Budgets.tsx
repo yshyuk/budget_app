@@ -6,6 +6,7 @@ import BudgetProgress from '../components/BudgetProgress';
 import type { Budget, Transaction } from '../types/database';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Calendar, Inbox } from 'lucide-react';
 
 export default function Budgets() {
   const { user } = useAuth();
@@ -86,45 +87,47 @@ export default function Budgets() {
       </div>
 
       {/* 연월 선택 */}
-      <div className="flex space-x-4">
-        <div>
-          <label htmlFor="year-select" className="sr-only">
-            연도 선택
-          </label>
-          <select
-            id="year-select"
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            {[...Array(5)].map((_, i) => {
-              const y = new Date().getFullYear() - 2 + i;
-              return (
-                <option key={y} value={y}>
-                  {y}년
-                </option>
-              );
-            })}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="month-select" className="sr-only">
-            월 선택
-          </label>
-          <select
-            id="month-select"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-            className="rounded-md border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            {[...Array(12)].map((_, i) => (
-              <option key={i + 1} value={i + 1}>
-                {i + 1}월
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
+      <Card>
+        <CardContent className="py-4">
+          <div className="flex items-center gap-3">
+            <Calendar className="h-5 w-5 text-muted-foreground" />
+            <div className="flex items-center gap-2 flex-1 flex-wrap">
+              <span className="text-sm font-medium whitespace-nowrap">조회 기간</span>
+              <div className="flex gap-2">
+                <select
+                  id="year-select"
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="연도 선택"
+                >
+                  {[...Array(5)].map((_, i) => {
+                    const y = new Date().getFullYear() - 2 + i;
+                    return (
+                      <option key={y} value={y}>
+                        {y}년
+                      </option>
+                    );
+                  })}
+                </select>
+                <select
+                  id="month-select"
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                  className="rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  aria-label="월 선택"
+                >
+                  {[...Array(12)].map((_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1}월
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="text-center py-12">
@@ -143,12 +146,13 @@ export default function Budgets() {
               <BudgetProgress budget={currentBudget} actual={actual} />
             ) : (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <p className="text-muted-foreground mb-4">
-                    {selectedYear}년 {selectedMonth}월 예산이 설정되지 않았습니다.
+                <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+                  <Inbox className="h-12 w-12 text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground font-medium mb-1">
+                    {selectedYear}년 {selectedMonth}월 예산이 설정되지 않았습니다
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    왼쪽 폼에서 예산을 설정해주세요.
+                    왼쪽 폼에서 예산을 설정하여 지출을 효과적으로 관리하세요
                   </p>
                 </CardContent>
               </Card>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { supabase } from '../lib/supabase';
+import { useToast } from '../contexts/ToastContext';
 import type { WishlistItem as WishlistItemType } from '../types/database';
 
 interface WishlistItemProps {
@@ -10,6 +11,7 @@ interface WishlistItemProps {
 }
 
 export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
+  const toast = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [showAddSaving, setShowAddSaving] = useState(false);
   const [savingAmount, setSavingAmount] = useState('');
@@ -49,9 +51,10 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
 
       setSavingAmount('');
       setShowAddSaving(false);
+      toast.success(`${amount.toLocaleString()}원이 저축되었습니다.`);
       onUpdate();
     } catch (err: any) {
-      alert('저축 금액 추가 중 오류: ' + err.message);
+      toast.error('저축 금액 추가 중 오류: ' + err.message);
     }
   };
 
@@ -64,9 +67,10 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
         .eq('id', item.id);
 
       if (error) throw error;
+      toast.success(!item.is_purchased ? '구매 완료 처리되었습니다!' : '구매 취소되었습니다.');
       onUpdate();
     } catch (err: any) {
-      alert('상태 변경 중 오류: ' + err.message);
+      toast.error('상태 변경 중 오류: ' + err.message);
     }
   };
 
@@ -81,9 +85,10 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
       if (error) throw error;
 
       setIsEditing(false);
+      toast.success('아이템이 수정되었습니다.');
       onUpdate();
     } catch (err: any) {
-      alert('수정 중 오류: ' + err.message);
+      toast.error('수정 중 오류: ' + err.message);
     }
   };
 
@@ -94,9 +99,10 @@ export default function WishlistItem({ item, onUpdate }: WishlistItemProps) {
       const { error } = await supabase.from('wishlist_items').delete().eq('id', item.id);
 
       if (error) throw error;
+      toast.success('아이템이 삭제되었습니다.');
       onUpdate();
     } catch (err: any) {
-      alert('삭제 중 오류: ' + err.message);
+      toast.error('삭제 중 오류: ' + err.message);
     }
   };
 

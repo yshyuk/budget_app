@@ -61,13 +61,11 @@ export default function Layout({ children }: { children: ReactNode }) {
                     </div>
                 </div>
             </nav>
-
-            {/* 메인 컨텐츠 */}
-            <main className="container py-6 md:py-10">
+            <main className="container py-6 md:py-10 pb-20 md:pb-10">
                 {children}
             </main>
 
-            {/* 모바일 하단 탭 네비게이션 */}
+            {/* 모바일 바텀 네비게이션 */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
                 <div className="grid grid-cols-4 h-16">
                     {navItems.map((item) => {
@@ -80,7 +78,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                                 className={`flex flex-col items-center justify-center gap-1 transition-colors ${
                                     active
                                         ? 'text-primary'
-                                        : 'text-muted-foreground'
+                                        : 'text-muted-foreground hover:text-foreground'
                                 }`}
                             >
                                 <Icon className={`h-5 w-5 ${active ? 'fill-current' : ''}`} />
