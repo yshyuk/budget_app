@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
-import type { Transaction } from '../types/database';
+import type { Transaction, Budget } from '../types/database';
 import { startOfMonth, endOfMonth, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Skeleton, SkeletonCard } from '../components/ui/Skeleton';
+import { Alert } from '../components/ui/Alert';
 import { ArrowUpIcon, ArrowDownIcon, WalletIcon, PlusIcon, Inbox, Heart } from 'lucide-react';
 import MonthlyTrendChart from '../components/MonthlyTrendChart';
 import CategoryPieChart from '../components/CategoryPieChart';
@@ -17,6 +18,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const [monthlyTransactions, setMonthlyTransactions] = useState<Transaction[]>([]);
   const [recentTransactions, setRecentTransactions] = useState<Transaction[]>([]);
+  const [currentBudget, setCurrentBudget] = useState<Budget | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,6 +51,17 @@ export default function Dashboard() {
           .limit(5);
 
         setRecentTransactions(recentData || []);
+
+        // 이번 달 예산
+        const { data: budgetData } = await supabase
+          .from('budgets')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('year', now.getFullYear())
+          .eq('month', now.getMonth() + 1)
+          .single();
+
+        setCurrentBudget(budgetData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -79,6 +92,47 @@ export default function Dashboard() {
   );
 
   const balance = summary.income - summary.expense - summary.saving;
+
+  // 예산 초과 알림 생성
+  const budgetAlerts = [];
+  if (currentBudget) {
+    const expensePercent = currentBudget.expense_budget > 0
+      ? (summary.expense / currentBudget.expense_budget) * 100
+      : 0;
+
+    if (expensePercent >= 100) {
+      budgetAlerts.push({
+        variant: 'error' as const,
+        title: '⚠️ 예산 초과!',
+        message: `이번 달 지출이 예산(${currentBudget.expense_budget.toLocaleString()}원)을 ${(expensePercent - 100).toFixed(0)}% 초과했습니다.`,
+      });
+    } else if (expensePercent >= 90) {
+      budgetAlerts.push({
+        variant: 'warning' as const,
+        title: '⚠️ 예산 90% 사용',
+        message: `이번 달 지출이 예산의 ${expensePercent.toFixed(0)}%에 도달했습니다. 남은 예산: ${(currentBudget.expense_budget - summary.expense).toLocaleString()}원`,
+      });
+    } else if (expensePercent >= 80) {
+      budgetAlerts.push({
+        variant: 'warning' as const,
+        title: '💡 예산 80% 사용',
+        message: `이번 달 지출이 예산의 ${expensePercent.toFixed(0)}%에 도달했습니다. 남은 예산: ${(currentBudget.expense_budget - summary.expense).toLocaleString()}원`,
+      });
+    }
+
+    // 수입 예산 미달
+    const incomePercent = currentBudget.income_budget > 0
+      ? (summary.income / currentBudget.income_budget) * 100
+      : 0;
+
+    if (incomePercent < 80 && currentBudget.income_budget > 0) {
+      budgetAlerts.push({
+        variant: 'info' as const,
+        title: '💰 수입 목표 진행 중',
+        message: `이번 달 수입이 목표의 ${incomePercent.toFixed(0)}%입니다. 목표: ${currentBudget.income_budget.toLocaleString()}원`,
+      });
+    }
+  }
 
   if (loading) {
     return (
@@ -127,6 +181,17 @@ export default function Dashboard() {
           </Button>
         </div>
       </div>
+
+      {/* 예산 알림 */}
+      {budgetAlerts.length > 0 && (
+        <div className="space-y-3">
+          {budgetAlerts.map((alert, index) => (
+            <Alert key={index} variant={alert.variant} title={alert.title}>
+              {alert.message}
+            </Alert>
+          ))}
+        </div>
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

@@ -6,6 +6,7 @@ import WishlistItem from '../components/WishlistItem';
 import type { WishlistItem as WishlistItemType } from '../types/database';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Alert } from '../components/ui/Alert';
 import { Inbox } from 'lucide-react';
 
 export default function Wishlist() {
@@ -64,12 +65,56 @@ export default function Wishlist() {
   const totalRemaining = stats.totalPrice - stats.totalSaved;
   const overallProgress = stats.totalPrice > 0 ? (stats.totalSaved / stats.totalPrice) * 100 : 0;
 
+  // 위시리스트 목표 달성 알림
+  const wishlistAlerts = [];
+
+  // 개별 아이템 목표 달성 확인
+  const achievedItems = items.filter((item) => {
+    if (item.is_purchased) return false;
+    const progress = item.price > 0 ? (item.saved_amount / item.price) * 100 : 0;
+    return progress >= 100;
+  });
+
+  if (achievedItems.length > 0) {
+    wishlistAlerts.push({
+      variant: 'success' as const,
+      title: '🎉 목표 달성!',
+      message: `${achievedItems.length}개의 아이템이 목표 금액에 도달했습니다! 이제 구매할 수 있습니다.`,
+    });
+  }
+
+  // 전체 진행률 알림
+  if (overallProgress >= 75 && overallProgress < 100 && stats.activeCount > 0) {
+    wishlistAlerts.push({
+      variant: 'success' as const,
+      title: '💪 목표에 가까워졌어요!',
+      message: `전체 위시리스트의 ${overallProgress.toFixed(0)}%를 달성했습니다. 조금만 더 힘내세요!`,
+    });
+  } else if (overallProgress >= 50 && overallProgress < 75 && stats.activeCount > 0) {
+    wishlistAlerts.push({
+      variant: 'info' as const,
+      title: '📈 절반 달성!',
+      message: `전체 위시리스트의 ${overallProgress.toFixed(0)}%를 달성했습니다. 계속해서 저축하세요!`,
+    });
+  }
+
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">위시리스트</h2>
         <p className="text-muted-foreground">사고 싶은 물건의 목표를 설정하고 저축하세요</p>
       </div>
+
+      {/* 위시리스트 알림 */}
+      {wishlistAlerts.length > 0 && (
+        <div className="space-y-3">
+          {wishlistAlerts.map((alert, index) => (
+            <Alert key={index} variant={alert.variant} title={alert.title}>
+              {alert.message}
+            </Alert>
+          ))}
+        </div>
+      )}
 
       {/* 통계 카드 */}
       <div className="grid gap-4 md:grid-cols-4">
