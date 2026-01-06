@@ -92,6 +92,61 @@ npm run dev
 
 브라우저에서 `http://localhost:5173`을 열어 앱을 확인할 수 있습니다.
 
+## Gmail 연동 설정 방법 (선택사항)
+
+Gmail API를 연동하면 카드 결제 승인 이메일을 자동으로 파싱하여 거래 내역에 추가할 수 있습니다.
+
+### 1. Google Cloud Console 설정
+
+1. [Google Cloud Console](https://console.cloud.google.com)에 접속
+2. 새 프로젝트 생성 (예: budget-app-gmail)
+3. "API 및 서비스" > "라이브러리"에서 "Gmail API" 검색하여 사용 설정
+4. "API 및 서비스" > "OAuth 동의 화면"으로 이동
+   - 사용자 유형: 외부 선택
+   - 앱 이름, 사용자 지원 이메일, 개발자 연락처 정보 입력
+   - 범위 추가: `https://www.googleapis.com/auth/gmail.readonly`
+5. "API 및 서비스" > "사용자 인증 정보"로 이동
+6. "사용자 인증 정보 만들기" > "OAuth 클라이언트 ID" 선택
+7. 애플리케이션 유형: "웹 애플리케이션" 선택
+8. 승인된 JavaScript 원본: `http://localhost:5173` 추가
+9. 승인된 리디렉션 URI: `http://localhost:5173` 추가
+10. 생성된 클라이언트 ID 복사
+
+### 2. 환경 변수 추가
+
+`.env` 파일에 다음 내용 추가:
+
+```env
+# Google OAuth for Gmail Integration
+VITE_GOOGLE_CLIENT_ID=your_client_id_here
+```
+
+### 3. Gmail 연동 사용
+
+1. 앱 실행 후 "Gmail 연동" 메뉴로 이동
+2. "Gmail 계정 연동" 버튼 클릭
+3. Google 계정으로 로그인하고 권한 승인
+4. 날짜 범위를 선택하고 "이메일에서 거래 내역 가져오기" 클릭
+5. 파싱된 거래 내역을 확인하고 선택적으로 저장
+
+### 지원하는 카드사
+
+- 신한카드
+- 삼성카드
+- 현대카드
+- 국민카드
+- 하나카드
+- 우리카드
+- 롯데카드
+- NH농협카드
+
+### 보안 및 개인정보
+
+- Gmail 읽기 권한만 사용하며, 이메일을 수정하거나 전송하지 않습니다
+- 이메일 내용은 브라우저에서만 처리되며 외부 서버로 전송되지 않습니다
+- OAuth 토큰은 브라우저 로컬 스토리지에 안전하게 저장됩니다
+- 언제든지 연동을 해제할 수 있습니다
+
 ## 테스트
 
 ### 테스트 실행
