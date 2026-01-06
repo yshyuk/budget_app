@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Budgets from './pages/Budgets';
 import Wishlist from './pages/Wishlist';
+import GmailIntegration from './pages/GmailIntegration';
 
 function App() {
   return (
@@ -55,6 +56,16 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <Wishlist />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gmail-integration"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <GmailIntegration />
                 </Layout>
               </ProtectedRoute>
             }
