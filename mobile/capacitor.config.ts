@@ -10,14 +10,14 @@ const config: CapacitorConfig = {
   plugins: {
     SplashScreen: {
       launchShowDuration: 2000,
-      backgroundColor: '#3B82F6',
+      backgroundColor: '#3B82F6', // Toss Blue
       showSpinner: false,
       androidSpinnerStyle: 'small',
       spinnerColor: '#FFFFFF'
     },
     StatusBar: {
       style: 'dark',
-      backgroundColor: '#3B82F6'
+      backgroundColor: '#3B82F6' // Toss Blue
     },
     Keyboard: {
       resize: 'native',

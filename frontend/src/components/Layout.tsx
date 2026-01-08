@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         <div className="min-h-screen bg-background font-sans text-foreground pb-16 md:pb-0">
             {/* 상단 네비게이션 */}
             <nav className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
+                <div className="container mx-auto flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0 px-4 md:px-8">
                     <div className="flex gap-6 md:gap-10">
                         <Link to="/dashboard" className="flex items-center space-x-2">
                             <span className="inline-block font-bold text-xl">가계부</span>
@@ -40,9 +40,8 @@ export default function Layout({ children }: { children: ReactNode }) {
                                 <Link
                                     key={item.path}
                                     to={item.path}
-                                    className={`flex items-center text-sm font-medium transition-colors hover:text-primary ${
-                                        isActive(item.path) ? 'text-foreground' : 'text-muted-foreground'
-                                    }`}
+                                    className={`flex items-center text-sm font-medium transition-colors hover:text-primary ${isActive(item.path) ? 'text-foreground' : 'text-muted-foreground'
+                                        }`}
                                 >
                                     {item.label}
                                 </Link>
@@ -61,7 +60,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                     </div>
                 </div>
             </nav>
-            <main className="container py-6 md:py-10 pb-20 md:pb-10">
+            <main className="container mx-auto py-6 md:py-10 pb-20 md:pb-10 animate-fade-in-up px-4 md:px-8">
                 {children}
             </main>
 
@@ -75,11 +74,10 @@ export default function Layout({ children }: { children: ReactNode }) {
                             <Link
                                 key={item.path}
                                 to={item.path}
-                                className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-                                    active
-                                        ? 'text-primary'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                }`}
+                                className={`flex flex-col items-center justify-center gap-1 transition-colors ${active
+                                    ? 'text-primary'
+                                    : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                             >
                                 <Icon className={`h-5 w-5 ${active ? 'fill-current' : ''}`} />
                                 <span className="text-xs font-medium">{item.mobileLabel}</span>
