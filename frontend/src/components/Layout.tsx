@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/Button';
-import { Home, Receipt, Wallet, Heart } from 'lucide-react';
+import { Home, Receipt, Wallet, Heart, Mail } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 export default function Layout({ children }: { children: ReactNode }) {
@@ -23,6 +23,7 @@ export default function Layout({ children }: { children: ReactNode }) {
         { path: '/transactions', label: '거래 내역', mobileLabel: '거래', icon: Receipt },
         { path: '/budgets', label: '예산 관리', mobileLabel: '예산', icon: Wallet },
         { path: '/wishlist', label: '위시리스트', mobileLabel: '위시', icon: Heart },
+        { path: '/gmail-integration', label: 'Gmail 연동', mobileLabel: 'Gmail', icon: Mail },
     ];
 
     return (
@@ -67,7 +68,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
             {/* 모바일 바텀 네비게이션 */}
             <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t">
-                <div className="grid grid-cols-4 h-16">
+                <div className="grid grid-cols-5 h-16">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const active = isActive(item.path);
