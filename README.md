@@ -41,14 +41,19 @@
 budget_app/
 ├── database/
 │   └── schema.sql          # Supabase 데이터베이스 스키마
-├── frontend/
+├── frontend/               # 웹 애플리케이션
 │   ├── src/
 │   │   ├── components/     # React 컴포넌트
 │   │   ├── pages/          # 페이지 컴포넌트
 │   │   ├── lib/            # 유틸리티 및 설정
-│   │   └── types/          # TypeScript 타입 정의
+│   │   ├── types/          # TypeScript 타입 정의
+│   │   └── tests/          # 테스트 파일
 │   ├── .env.example        # 환경 변수 템플릿
 │   └── package.json
+├── mobile/                 # Android 모바일 앱 (Capacitor)
+│   ├── capacitor.config.ts # Capacitor 설정
+│   ├── package.json
+│   └── README.md           # 모바일 앱 설정 가이드
 └── README.md
 ```
 
@@ -278,6 +283,115 @@ Budget App은 Progressive Web App(PWA)으로 제작되어 모바일 기기의 �
   - priority (1-5), target_date, is_purchased
 
 자세한 스키마는 `database/schema.sql` 파일을 참조하세요.
+
+## 모바일 앱 (Android)
+
+웹 애플리케이션과 동일한 기능을 제공하는 Android 앱입니다.
+
+### 특징
+- 📱 Android 폰 및 태블릿 지원
+- 🔄 웹과 동일한 백엔드 (Supabase) 사용
+- ⚡ Capacitor 기반으로 빠른 성능
+- 🎨 모바일 최적화된 UI
+
+### 설치 및 개발
+
+자세한 내용은 [`mobile/README.md`](mobile/README.md)를 참조하세요.
+
+**빠른 시작:**
+
+```bash
+# 1. 의존성 설치
+cd mobile
+npm install
+
+# 2. Android 프로젝트 생성 (처음 한 번만)
+npx cap add android
+
+# 3. 웹 빌드 및 동기화
+npm run build
+
+# 4. Android Studio에서 열기
+npm run android
+```
+
+**요구사항:**
+- Android Studio (최신 버전)
+- Android SDK (API 33+)
+- Node.js 18+
+
+## 구성도
+
+```mermaid
+flowchart TB
+    subgraph Login["1. 로그인 화면"]
+        L1["📱 가계부 앱"]
+        L2["이메일 입력"]
+        L3["비밀번호 입력"]
+        L4["[로그인 버튼]"]
+        L5["회원가입 링크"]
+    end
+    
+    subgraph Dashboard["2. 대시보드"]
+        D1["📊 대시보드"]
+        D2["이번 달 요약<br/>━━━━━━━━━<br/>수입: 3,000,000원<br/>지출: 1,500,000원<br/>저축: 800,000원<br/>남은 예산: 700,000원"]
+        D3["📈 지출+저축 차트<br/>[원형 차트 영역]"]
+        D4["━━━━━━━━━<br/>[거래관리] [예산설정]<br/>[위시리스트] [통계]"]
+    end
+    
+    subgraph Trans["3. 거래 관리"]
+        T1["💰 거래 내역"]
+        T2["[+ 새 거래 추가]"]
+        T3["━━━━━━━━━<br/>2024-12-23 | 수입<br/>급여: 3,000,000원<br/>━━━━━━━━━<br/>2024-12-20 | 지출<br/>식비: 50,000원<br/>━━━━━━━━━<br/>2024-12-18 | 저축<br/>적금: 500,000원"]
+        T4["[수정] [삭제]"]
+    end
+    
+    subgraph Budget["4. 예산 설정"]
+        B1["⚙️ 월별 예산 설정"]
+        B2["2024년 12월"]
+        B3["수입 예산: ___원<br/>지출 예산: ___원<br/>저축 예산: ___원"]
+        B4["[저장하기]"]
+    end
+    
+    subgraph Wish["5. 위시리스트"]
+        W1["🎁 위시리스트"]
+        W2["[+ 새 항목 추가]"]
+        W3["━━━━━━━━━<br/>MacBook Pro<br/>가격: 2,500,000원<br/>우선순위: ⭐⭐⭐⭐⭐<br/>━━━━━━━━━<br/>저축 시뮬레이션:<br/>월 500,000원 저축 시<br/>5개월 후 구매 가능<br/>(2025년 5월)<br/>━━━━━━━━━<br/>갤럭시 워치<br/>가격: 400,000원<br/>우선순위: ⭐⭐⭐"]
+        W4["[수정] [삭제] [구매완료]"]
+    end
+    
+    subgraph Stats["6. 통계"]
+        S1["📊 통계 & 분석"]
+        S2["월별 추이<br/>[꺾은선 그래프]"]
+        S3["카테고리별 지출<br/>[막대 그래프]"]
+        S4["저축 달성률<br/>[진행률 바]"]
+    end
+    
+    subgraph AddTrans["7. 거래 추가 폼"]
+        A1["거래 추가"]
+        A2["유형: [수입▼][지출][저축]<br/>카테고리: ___<br/>금액: ___원<br/>날짜: 2024-12-23<br/>메모: ___"]
+        A3["[취소] [저장]"]
+    end
+    
+    subgraph AddWish["8. 위시리스트 추가"]
+        AW1["위시리스트 추가"]
+        AW2["상품명: ___<br/>가격: ___원<br/>우선순위: [⭐⭐⭐⭐⭐]<br/>메모: ___"]
+        AW3["━━━━━━━━━<br/>💡 예상 구매 시기<br/>남은 예산: 700,000원<br/>월 30% 저축시: 210,000원<br/>→ 12개월 후 구매 가능"]
+        AW4["[취소] [저장]"]
+    end
+    
+    Login -.->|로그인 성공| Dashboard
+    Dashboard -.->|거래관리| Trans
+    Dashboard -.->|예산설정| Budget
+    Dashboard -.->|위시리스트| Wish
+    Dashboard -.->|통계| Stats
+    Trans -.->|추가| AddTrans
+    Wish -.->|추가| AddWish
+    
+    style Dashboard fill:#e1f5ff
+    style Wish fill:#ffe1e1
+    style Stats fill:#e1ffe1
+```
 
 ## 라이선스
 

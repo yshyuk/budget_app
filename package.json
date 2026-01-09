@@ -1,0 +1,22 @@
+{
+  "name": "budget-app",
+  "version": "1.0.0",
+  "description": "Personal budget management application",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "build:mobile": "cd mobile && npm run build",
+    "test": "cd frontend && npm run test",
+    "install:all": "npm install && cd frontend && npm install && cd ../mobile && npm install"
+  },
+  "keywords": [
+    "budget",
+    "finance",
+    "react",
+    "typescript",
+    "supabase"
+  ],
+  "author": "",
+  "license": "MIT"
+}
